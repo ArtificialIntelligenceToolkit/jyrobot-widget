@@ -25,3 +25,4 @@ class ExampleWidget(DOMWidget):
 
     x = Integer(0).tag(sync=True)
     y = Integer(0).tag(sync=True)
+    world = Unicode('{"x": 42}').tag(sync=True)

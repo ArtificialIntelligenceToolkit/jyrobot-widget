@@ -11,6 +11,7 @@ import {
 } from '@jupyter-widgets/base';
 
 import { MODULE_NAME, MODULE_VERSION } from './version';
+import { World } from './World';
 
 // Import the CSS
 import '../css/widget.css';
@@ -27,6 +28,7 @@ export class ExampleModel extends DOMWidgetModel {
 	    _view_module_version: ExampleModel.view_module_version,
 	    x: 0,
 	    y: 0,
+	    world: "",
 	};
     }
     
@@ -45,18 +47,21 @@ export class ExampleModel extends DOMWidgetModel {
 
 export class ExampleView extends DOMWidgetView {
     private ctx: GraphicsContext;
+    private world: World;
+    private world_json: any;
     
     render() {
-	this.el.classList.add('custom-widget');
+	this.el.classList.add('jyrobot-widget');
 	var canvas = document.createElement('canvas');
 	canvas.width = 100;
 	canvas.height = 100;
 	this.el.appendChild(canvas)
 	var context = canvas.getContext('2d')!;
 	this.ctx = new GraphicsContext(context);
-	//this.value_changed();
+
 	this.model.on('change:x', this.x_changed, this);
 	this.model.on('change:y', this.x_changed, this);
+	this.model.on('change:world', this.world_changed, this);
     }
     
     x_changed() {
@@ -65,7 +70,7 @@ export class ExampleView extends DOMWidgetView {
 	var y = this.model.get('y');
 	this.ctx.lineTo(x,y);
 	this.ctx.stroke();
-	console.log(x,y);
+	console.log("x:", x);
     }
     
     y_changed() {
@@ -74,6 +79,14 @@ export class ExampleView extends DOMWidgetView {
 	var y = this.model.get('y');
 	this.ctx.lineTo(x,y);
 	this.ctx.stroke();
-	console.log(x,y);
+	console.log("yy", y);
+    }
+
+    world_changed() {
+	var world_str = this.model.get('world');
+	console.log("world_str:", world_str);
+	this.world_json = JSON.parse(world_str);
+	this.world = new World(this.world_json);
+	console.log("world:", this.world);
     }
 }
