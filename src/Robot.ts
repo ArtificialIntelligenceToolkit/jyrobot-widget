@@ -30,9 +30,9 @@ export class Robot {
 	this.doTrace = true;
 	this.trace = [];
 	this.max_trace_length = 1000;
-	this.x = 0;
-	this.y = 0;
-	this.direction = 0;
+	this.x = 0; // cm
+	this.y = 0; // cm
+	this.direction = 0; // radians
 	this.state = "";
 	this.time = 0;
 	this.debug = false;
@@ -60,7 +60,8 @@ export class Robot {
 	this.name = config.name || "Robbie";
 	this.x = config.x || 100;
 	this.y = config.y || 100;
-	this.direction = config.direction || 0;
+	this.direction = config.direction || 0; // comes in as degrees
+	this.direction = this.direction * Math.PI / 180; // save as radians
 	if (typeof config.color !== "undefined") {
 	    this.color = new Color(config.color[0], config.color[1], config.color[2]);
 	} else {

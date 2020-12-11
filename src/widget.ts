@@ -25,6 +25,8 @@ export class ExampleModel extends DOMWidgetModel {
 	    _view_module: ExampleModel.view_module,
 	    _view_module_version: ExampleModel.view_module_version,
 	    config: "{}",
+	    update_int: 0,
+	    draw_int: 0,
 	};
     }
 
@@ -45,6 +47,7 @@ export class ExampleView extends DOMWidgetView {
     private world: World;
     private _canvas: HTMLCanvasElement;
     private canvas: Canvas;
+    private time: number = 0.0;
 
     render() {
 	this.el.classList.add('jyrobot-widget');
@@ -52,7 +55,8 @@ export class ExampleView extends DOMWidgetView {
 	this.el.appendChild(this._canvas)
 
 	this.model.on('change:config', this.config_changed, this);
-	this.model.on('change:time', this.time_changed, this);
+	this.model.on('change:update_int', this.update_changed, this);
+	this.model.on('change:draw_int', this.draw_changed, this);
 	this.config_changed();
     }
 
@@ -60,19 +64,17 @@ export class ExampleView extends DOMWidgetView {
 	var config_str = this.model.get('config');
 	console.log("config_str:", config_str);
 	var config = JSON.parse(config_str);
-	this.world = new World(config.world);
-
-	// Create robot, and add to world:
-	for (let robotConfig of config.robots)  {
-	    let robot: Robot = new Robot(robotConfig);
-	    this.world.addRobot(robot);
-	}
-
-	this.canvas = new Canvas(this._canvas, 500, 250, 1.0);
+	this.world = new World(config);
+	this.canvas = new Canvas(this._canvas, config.width || 500, config.height || 250, 1.0);
 	this.world.draw(this.canvas);
     }
 
-    time_changed() {
+    update_changed() {
+	this.time += 0.05;
+	this.world.update(this.time);
+    }
+
+    draw_changed() {
 	this.world.draw(this.canvas);
     }
 }

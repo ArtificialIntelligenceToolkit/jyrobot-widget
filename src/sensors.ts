@@ -22,7 +22,8 @@ export class RangeSensor {
     constructor(robot: Robot, config: any) {
 	this.robot = robot;
 	this.position = config.position || 10;
-	this.direction = config.direction || 0;
+	this.direction = config.direction || 0; // comes in degrees
+	this.direction = this.direction * Math.PI * 180; // save as radians
 	this.max = config.max || 100;
 	this.width = config.width || 1.0;
 	this.distance = this.reading * this.max;
@@ -106,7 +107,8 @@ export class Camera {
 	this.robot = robot;
 	this.cameraShape = [config.width || 256, config.height || 128];
 	this.colorsFadeWithDistance = config.colorsFadeWithDistance || 1.0;
-	this.angle = config.angle || 60; // in degrees
+	this.angle = config.angle || 60; // comes in degrees
+	this.angle = this.angle * Math.PI / 180; // save in radians
 	this.camera = new Array(this.cameraShape[0]);
 	this.robotHits = new Array(this.cameraShape[0]);
     }
@@ -116,14 +118,14 @@ export class Camera {
 	    const angle: number = i/this.cameraShape[0] * this.angle - this.angle/2;
 	    this.camera[i] = this.robot.castRay(
 		this.robot.x, this.robot.y,
-		Math.PI/2 -this.robot.direction - angle*Math.PI/180.0, 1000, false);
+		Math.PI/2 -this.robot.direction - angle, 1000, false);
 	}
 	// Only needed if other robots:
 	for (let i=0; i<this.cameraShape[0]; i++) {
 	    const angle: number = i/this.cameraShape[0] * this.angle - this.angle/2;
 	    this.robotHits[i] = this.robot.castRayRobot(
 		this.robot.x, this.robot.y,
-		Math.PI/2 -this.robot.direction - angle*Math.PI/180.0, 1000);
+		Math.PI/2 -this.robot.direction - angle, 1000);
 	}
     }
 

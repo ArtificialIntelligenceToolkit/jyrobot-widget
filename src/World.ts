@@ -25,10 +25,19 @@ export class World {
     public boundary_wall_width: number = 1;
     public ground_color: Color;
 
-    constructor(config: any) {
-        this.time = 0;
+    setConfig(config: any) {
         this.w = config.width || 500;
         this.h = config.height || 250;
+	console.log("boxes:", config.boxes);
+	for (let box of config.boxes || []) {
+	    this.addBox(new Color(box.color[0], box.color[1], box.color[2]),
+			box.p1.x, box.p1.y, box.p2.x, box.p2.y);
+	}
+    }
+
+    constructor(config: any) {
+        this.time = 0;
+	this.setConfig(config.world || {});
 	this.boundary_wall_color = new Color(128, 0, 128);
 	this.ground_color = new Color(0, 128, 0)
 	// Put a wall around boundary:
@@ -36,15 +45,15 @@ export class World {
         const p2 = new Point(0, this.h);
         const p3 = new Point(this.w, this.h);
         const p4 = new Point(this.w, 0);
-	// Not a box, but four walls:
+	// Not a box, but surround area with four walls:
         this.addWall(this.boundary_wall_color, null, new Line(p1, p2));
         this.addWall(this.boundary_wall_color, null, new Line(p2, p3));
         this.addWall(this.boundary_wall_color, null, new Line(p3, p4));
         this.addWall(this.boundary_wall_color, null, new Line(p4, p1));
-	console.log("boxes:", config.boxes);
-	for (let box of config.boxes || []) {
-	    this.addBox(new Color(box.color[0], box.color[1], box.color[2]),
-			box.p1.x, box.p1.y, box.p2.x, box.p2.y);
+	// Create robot, and add to world:
+	for (let robotConfig of config.robots)  {
+	    let robot: Robot = new Robot(robotConfig);
+	    this.addRobot(robot);
 	}
     }
 

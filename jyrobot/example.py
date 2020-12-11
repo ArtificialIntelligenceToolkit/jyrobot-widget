@@ -24,4 +24,11 @@ class ExampleWidget(DOMWidget):
     _view_module_version = Unicode(module_version).tag(sync=True)
 
     config = Unicode('{}').tag(sync=True)
-    time = Integer(0).tag(sync=True)
+    update_int = Integer(0).tag(sync=True)
+    draw_int = Integer(0).tag(sync=True)
+
+    def update(self):
+        self.update_int += 1
+
+    def draw(self):
+        self.update_int += 1
