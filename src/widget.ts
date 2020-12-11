@@ -1,10 +1,6 @@
 // Copyright (c) {{ cookiecutter.author_name }}
 // Distributed under the terms of the Modified BSD License.
 import {
-    GraphicsContext
-} from '@lumino/datagrid';
-
-import {
     DOMWidgetModel,
     DOMWidgetView,
     ISerializers,
@@ -12,6 +8,8 @@ import {
 
 import { MODULE_NAME, MODULE_VERSION } from './version';
 import { World } from './World';
+import { Robot } from './Robot';
+import { Canvas } from './utils';
 
 // Import the CSS
 import '../css/widget.css';
@@ -26,17 +24,15 @@ export class ExampleModel extends DOMWidgetModel {
 	    _view_name: ExampleModel.view_name,
 	    _view_module: ExampleModel.view_module,
 	    _view_module_version: ExampleModel.view_module_version,
-	    x: 0,
-	    y: 0,
-	    world: "",
+	    config: "{}",
 	};
     }
-    
+
     static serializers: ISerializers = {
 	...DOMWidgetModel.serializers,
 	// Add any extra serializers here
     };
-    
+
     static model_name = 'ExampleModel';
     static model_module = MODULE_NAME;
     static model_module_version = MODULE_VERSION;
@@ -46,47 +42,37 @@ export class ExampleModel extends DOMWidgetModel {
 }
 
 export class ExampleView extends DOMWidgetView {
-    private ctx: GraphicsContext;
     private world: World;
-    private world_json: any;
-    
+    private _canvas: HTMLCanvasElement;
+    private canvas: Canvas;
+
     render() {
 	this.el.classList.add('jyrobot-widget');
-	var canvas = document.createElement('canvas');
-	canvas.width = 100;
-	canvas.height = 100;
-	this.el.appendChild(canvas)
-	var context = canvas.getContext('2d')!;
-	this.ctx = new GraphicsContext(context);
+	this._canvas = document.createElement('canvas');
+	this.el.appendChild(this._canvas)
 
-	this.model.on('change:x', this.x_changed, this);
-	this.model.on('change:y', this.x_changed, this);
-	this.model.on('change:world', this.world_changed, this);
-    }
-    
-    x_changed() {
-	//this.el.textContent = this.model.get('value');
-	var x = this.model.get('x');
-	var y = this.model.get('y');
-	this.ctx.lineTo(x,y);
-	this.ctx.stroke();
-	console.log("x:", x);
-    }
-    
-    y_changed() {
-	//this.el.textContent = this.model.get('value');
-	var x = this.model.get('x');
-	var y = this.model.get('y');
-	this.ctx.lineTo(x,y);
-	this.ctx.stroke();
-	console.log("yy", y);
+	this.model.on('change:config', this.config_changed, this);
+	this.model.on('change:time', this.time_changed, this);
+	this.config_changed();
     }
 
-    world_changed() {
-	var world_str = this.model.get('world');
-	console.log("world_str:", world_str);
-	this.world_json = JSON.parse(world_str);
-	this.world = new World(this.world_json);
-	console.log("world:", this.world);
+    config_changed() {
+	var config_str = this.model.get('config');
+	console.log("config_str:", config_str);
+	var config = JSON.parse(config_str);
+	this.world = new World(config.world);
+
+	// Create robot, and add to world:
+	for (let robotConfig of config.robots)  {
+	    let robot: Robot = new Robot(robotConfig);
+	    this.world.addRobot(robot);
+	}
+
+	this.canvas = new Canvas(this._canvas, 500, 250, 1.0);
+	this.world.draw(this.canvas);
+    }
+
+    time_changed() {
+	this.world.draw(this.canvas);
     }
 }

@@ -13,16 +13,16 @@ export class Canvas {
     public shape: boolean;
     private _scale: number;
 
-    constructor(width: number, height: number, scale: number) {
+    constructor(canvas: HTMLCanvasElement, width: number, height: number, scale: number) {
 	this._scale = scale;
 	this.width = width;
 	this.height = height;
-	this.canvas = document.createElement('canvas');
+	this.canvas = canvas; //document.createElement('canvas');
 	this.canvas.width = this.width;
 	this.canvas.height = this.height;
-	this.canvas.style.zIndex   = "8";
-        this.canvas.style.position = "absolute";
-        this.canvas.style.border   = "1px solid";
+	//this.canvas.style.zIndex   = "8";
+        //this.canvas.style.position = "absolute";
+        //this.canvas.style.border   = "1px solid";
 	this.canvasGC = this.canvas.getContext('2d')!;
 	this.gc = new GraphicsContext(this.canvasGC);
 	this.shape = false; // in the middle of a shape?

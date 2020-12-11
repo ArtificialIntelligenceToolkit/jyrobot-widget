@@ -41,6 +41,7 @@ export class World {
         this.addWall(this.boundary_wall_color, null, new Line(p2, p3));
         this.addWall(this.boundary_wall_color, null, new Line(p3, p4));
         this.addWall(this.boundary_wall_color, null, new Line(p4, p1));
+	console.log("boxes:", config.boxes);
 	for (let box of config.boxes || []) {
 	    this.addBox(new Color(box.color[0], box.color[1], box.color[2]),
 			box.p1.x, box.p1.y, box.p2.x, box.p2.y);

@@ -23,6 +23,5 @@ class ExampleWidget(DOMWidget):
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
 
-    x = Integer(0).tag(sync=True)
-    y = Integer(0).tag(sync=True)
-    world = Unicode('{"x": 42}').tag(sync=True)
+    config = Unicode('{}').tag(sync=True)
+    time = Integer(0).tag(sync=True)
