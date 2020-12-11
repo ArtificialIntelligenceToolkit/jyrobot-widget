@@ -55,6 +55,15 @@ export class Robot {
 	this.initBoundingBox();
     }
 
+    setConfig(config: any) {
+	if (typeof config.vx !== "undefined" && config.vx !== null)
+	    this.vx = config.vx;
+	if (typeof config.vy !== "undefined" && config.vy !== null)
+	    this.vy = config.vy;
+	if (typeof config.va !== "undefined" && config.va !== null)
+	    this.va = config.va;
+    }
+
     constructor(config: any) {
 	this.initialize();
 	this.name = config.name || "Robbie";

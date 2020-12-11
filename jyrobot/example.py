@@ -8,6 +8,8 @@
 TODO: Add module docstring
 """
 
+import json
+
 from ipywidgets import DOMWidget
 from traitlets import Unicode, Integer
 from ._frontend import module_name, module_version
@@ -26,9 +28,13 @@ class ExampleWidget(DOMWidget):
     config = Unicode('{}').tag(sync=True)
     update_int = Integer(0).tag(sync=True)
     draw_int = Integer(0).tag(sync=True)
+    command = Unicode("").tag(sync=True)
 
     def update(self):
         self.update_int += 1
 
     def draw(self):
-        self.update_int += 1
+        self.draw_int += 1
+
+    def set_robot(self, index, vx, vy, va):
+        self.command = json.dumps({"index": index, "vx": vx, "vy": vy, "va": va})

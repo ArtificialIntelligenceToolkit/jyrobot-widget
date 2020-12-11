@@ -57,6 +57,7 @@ export class ExampleView extends DOMWidgetView {
 	this.model.on('change:config', this.config_changed, this);
 	this.model.on('change:update_int', this.update_changed, this);
 	this.model.on('change:draw_int', this.draw_changed, this);
+	this.model.on('change:command', this.command_changed, this);
 	this.config_changed();
     }
 
@@ -72,9 +73,19 @@ export class ExampleView extends DOMWidgetView {
     update_changed() {
 	this.time += 0.05;
 	this.world.update(this.time);
+	for (let robot of this.world.robots) {
+	    console.log("robot:", robot.name, robot.x, robot.x, robot.direction);
+	}
     }
 
     draw_changed() {
 	this.world.draw(this.canvas);
+    }
+
+    command_changed() {
+	var command_str = this.model.get('command');
+	console.log("command_str:", command_str);
+	var command = JSON.parse(command_str);
+	this.world.robots[command.index].setConfig(command);
     }
 }
